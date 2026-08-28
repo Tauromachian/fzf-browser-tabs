@@ -4,12 +4,6 @@
 
   let overlay = null;
 
-  const isEditable = (el) => {
-    if (!el) return false;
-    const tag = el.tagName;
-    return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
-  };
-
   const close = () => {
     if (overlay && overlay.parentNode) {
       overlay.parentNode.removeChild(overlay);
