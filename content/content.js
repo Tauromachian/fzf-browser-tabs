@@ -292,9 +292,9 @@
   };
 
   browser.runtime.onMessage.addListener((msg) => {
-    if (msg && msg.type === "show-switcher") {
-      show(msg.tabs);
-    }
+    if (!msg?.type === "show-switcher") return;
+
+    show(msg.tabs);
   });
 
   document.addEventListener("keydown", (e) => {
