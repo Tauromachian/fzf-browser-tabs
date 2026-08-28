@@ -40,7 +40,7 @@
     style.textContent = `
       :host { all: initial; }
       * { box-sizing: border-box; }
-      .backdrop {
+      .overlay {
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
@@ -118,12 +118,12 @@
     `;
     shadow.appendChild(style);
 
-    const backdrop = document.createElement("div");
-    backdrop.className = "backdrop";
+    const overlay = document.createElement("div");
+    overlay.className = "overlay";
     const panel = document.createElement("div");
     panel.className = "panel";
-    backdrop.appendChild(panel);
-    shadow.appendChild(backdrop);
+    overlay.appendChild(panel);
+    shadow.appendChild(overlay);
 
     const input = document.createElement("input");
     input.id = "search";
@@ -286,8 +286,8 @@
       }
     });
 
-    backdrop.addEventListener("mousedown", (e) => {
-      if (e.target === backdrop) {
+    overlay.addEventListener("mousedown", (e) => {
+      if (e.target === overlay) {
         e.preventDefault();
         close();
       }
