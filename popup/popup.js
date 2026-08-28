@@ -1,31 +1,30 @@
 const searchEl = document.getElementById("search");
 const resultsEl = document.getElementById("results");
 
+function render(tabs) {
+  while (resultsEl.firstChild) {
+    resultsEl.removeChild(resultsEl.firstChild);
+  }
+  for (const tab of tabs) {
+    const li = document.createElement("li");
+    li.dataset.tabId = tab.id;
+
+    if (tab.favIconUrl) {
+      const img = document.createElement("img");
+      img.src = tab.favIconUrl;
+      img.className = "favicon";
+      li.appendChild(img);
+    }
+
+    li.appendChild(document.createTextNode(tab.title || tab.url));
+    resultsEl.appendChild(li);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   searchEl.focus();
 
   const tabs = await browser.tabs.query({});
-
-  const render = (items) => {
-    while (resultsEl.firstChild) {
-      resultsEl.removeChild(resultsEl.firstChild);
-    }
-    for (const tab of items) {
-      const li = document.createElement("li");
-      li.dataset.tabId = tab.id;
-
-      if (tab.favIconUrl) {
-        const img = document.createElement("img");
-        img.src = tab.favIconUrl;
-        img.className = "favicon";
-        li.appendChild(img);
-      }
-
-      li.appendChild(document.createTextNode(tab.title || tab.url));
-      resultsEl.appendChild(li);
-    }
-  };
-
   render(tabs);
 
   searchEl.addEventListener("input", () => {
