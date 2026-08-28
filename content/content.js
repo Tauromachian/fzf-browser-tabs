@@ -5,10 +5,10 @@
   let container = null;
 
   const close = () => {
-    if (container && overlay.parentNode) {
-      container.parentNode.removeChild(overlay);
-      container = null;
-    }
+    if (!container) return;
+
+    container.remove();
+    container = null;
   };
 
   const show = async (incomingTabs) => {
