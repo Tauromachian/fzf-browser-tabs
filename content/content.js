@@ -44,14 +44,14 @@
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 2147483647;
+        z-index: 2147483646;
         font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       }
       .panel {
         width: min(640px, 90vw);
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
         max-height: 70vh;
         background: #1e1e1e;
         color: #eee;
@@ -60,6 +60,7 @@
         padding: 10px;
         display: flex;
         flex-direction: column;
+        z-index: 2147483647;
       }
       #search {
         width: 100%;
@@ -122,8 +123,6 @@
     overlay.className = "overlay";
     const panel = document.createElement("div");
     panel.className = "panel";
-    overlay.appendChild(panel);
-    shadow.appendChild(overlay);
 
     const input = document.createElement("input");
     input.id = "search";
@@ -132,6 +131,9 @@
     input.spellcheck = false;
     input.autocomplete = "off";
     panel.appendChild(input);
+
+    shadow.appendChild(overlay);
+    shadow.appendChild(panel);
 
     const results = document.createElement("ul");
     results.id = "results";
