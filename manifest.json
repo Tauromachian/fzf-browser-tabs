@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "fzf-browser-tabs",
+  "version": "0.1.0",
+  "description": "Fuzzy-find browser tabs",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fzf-browser-tabs@example.com",
+      "strict_min_version": "109.0"
+    }
+  },
+
+  "permissions": ["tabs", "scripting"],
+  "host_permissions": ["<all_urls>"],
+
+  "commands": {
+    "open-tab-switcher": {
+      "suggested_key": {
+        "default": "Ctrl+Alt+K",
+        "mac": "Command+Alt+K"
+      },
+      "description": "Open the fzf tab switcher"
+    }
+  },
+
+  "background": {
+    "scripts": ["background/background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}
