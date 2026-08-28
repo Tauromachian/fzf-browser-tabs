@@ -2,18 +2,18 @@
   if (window.__fzfBrowserTabsInjected) return;
   window.__fzfBrowserTabsInjected = true;
 
-  let overlay = null;
+  let container = null;
 
   const close = () => {
-    if (overlay && overlay.parentNode) {
-      overlay.parentNode.removeChild(overlay);
-      overlay = null;
+    if (container && overlay.parentNode) {
+      container.parentNode.removeChild(overlay);
+      container = null;
     }
   };
 
   const show = async (incomingTabs) => {
-    if (overlay) {
-      const existing = overlay.shadowRoot.querySelector("#search");
+    if (container) {
+      const existing = container.shadowRoot.querySelector("#search");
       if (existing) {
         existing.focus();
         existing.select();
@@ -138,7 +138,7 @@
     panel.appendChild(results);
 
     document.documentElement.appendChild(host);
-    overlay = host;
+    container = host;
 
     let selectedIndex = 0;
     let currentItems = tabs;
@@ -301,7 +301,7 @@
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && overlay) {
+    if (e.key === "Escape" && container) {
       close();
     }
   }, true);
