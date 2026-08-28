@@ -288,12 +288,7 @@
       }
     });
 
-    overlay.addEventListener("mousedown", (e) => {
-      if (e.target === overlay) {
-        e.preventDefault();
-        close();
-      }
-    });
+    overlay.addEventListener("click", () => close());
   };
 
   browser.runtime.onMessage.addListener((msg) => {
