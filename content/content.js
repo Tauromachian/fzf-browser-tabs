@@ -44,26 +44,26 @@
       * { box-sizing: border-box; }
       dialog {
         border: 0;
-        padding: 10px;
-        border-radius: 10px;
+        padding: 14px;
+        border-radius: 12px;
         background: #1e1e1e;
         color: #eee;
         box-shadow: 0 24px 64px rgba(0,0,0,0.55);
         font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-        width: min(640px, 90vw);
-        max-height: 70vh;
+        width: min(720px, 92vw);
+        max-height: 75vh;
       }
       dialog::backdrop {
         background: rgba(0, 0, 0, 0.45);
       }
       #search {
         width: 100%;
-        padding: 10px 12px;
-        font-size: 16px;
+        padding: 14px 16px;
+        font-size: 20px;
         background: #2a2a2a;
         color: #eee;
         border: 1px solid #3a3a3a;
-        border-radius: 6px;
+        border-radius: 8px;
         outline: none;
         font-family: inherit;
       }
@@ -71,21 +71,21 @@
       #results {
         list-style: none;
         padding: 0;
-        margin: 8px 0 0 0;
+        margin: 10px 0 0 0;
         overflow-y: auto;
         flex: 1 1 auto;
       }
       #results li {
-        padding: 8px 10px;
+        padding: 12px 14px;
         cursor: pointer;
-        border-radius: 5px;
+        border-radius: 6px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 13px;
+        gap: 12px;
+        font-size: 16px;
         line-height: 1.4;
       }
       #results li.selected {
@@ -93,22 +93,22 @@
         color: #fff;
       }
       .favicon {
-        width: 16px;
-        height: 16px;
+        width: 22px;
+        height: 22px;
         flex-shrink: 0;
       }
       .title { overflow: hidden; text-overflow: ellipsis; }
       .meta {
         opacity: 0.55;
-        font-size: 11px;
+        font-size: 13px;
         margin-left: auto;
         flex-shrink: 0;
       }
       .empty {
-        padding: 16px;
+        padding: 20px;
         text-align: center;
         opacity: 0.5;
-        font-size: 13px;
+        font-size: 15px;
       }
     `;
     shadow.appendChild(style);
