@@ -11,12 +11,14 @@
     if (dialog && dialog.open) dialog.close();
   };
 
-  const show = async (incomingTabs) => {
+  const show = async (incomingTabs, currentTabID) => {
     if (container) {
       container.input.focus();
       container.input.select();
       return;
     }
+
+    console.log("currentTabID", currentTabID);
 
     const tabs = [];
 
@@ -26,12 +28,11 @@
     }
 
     for (const t of incomingTabs) {
-      if (t && t.id != null) tabs.push(t);
-    }
+      if (!t || t.id === null) continue;
+      console.log(t);
+      if (t.id === currentTabID) continue;
 
-    if (tabs.length === 0) {
-      console.warn("fzf-browser-tabs: no tabs received");
-      return;
+      tabs.push(t);
     }
 
     const host = document.createElement("div");
@@ -174,13 +175,6 @@
         title.textContent = tab.title || tab.url || "(untitled)";
         li.appendChild(title);
 
-        if (tab.active) {
-          const meta = document.createElement("span");
-          meta.className = "meta";
-          meta.textContent = "current";
-          li.appendChild(meta);
-        }
-
         results.appendChild(li);
       }
 
@@ -298,6 +292,6 @@
     if (!msg) return;
     if (msg.type !== "show-switcher") return;
 
-    show(msg.tabs);
+    show(msg.tabs, msg.currentTabID);
   });
 })();
