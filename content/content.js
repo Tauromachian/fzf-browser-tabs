@@ -22,11 +22,16 @@
     }
 
     const tabs = [];
-    if (Array.isArray(incomingTabs)) {
-      for (const t of incomingTabs) {
-        if (t && t.id != null) tabs.push(t);
-      }
+
+    if (!Array.isArray(incomingTabs)) {
+      console.warn("fzf-browser-tabs: something went wrong with tabs");
+      return;
     }
+
+    for (const t of incomingTabs) {
+      if (t && t.id != null) tabs.push(t);
+    }
+
     if (tabs.length === 0) {
       console.warn("fzf-browser-tabs: no tabs received");
       return;
@@ -207,7 +212,9 @@
     const select = async (idx) => {
       const target = (idx == null) ? selectedIndex : idx;
       const tab = currentItems[target];
+
       if (!tab) return;
+
       const tabId = tab.id;
       const windowId = tab.windowId;
       close();
@@ -237,12 +244,15 @@
 
     input.addEventListener("input", () => {
       const query = input.value.trim();
+
       if (!query) {
         selectedIndex = 0;
         render(tabs);
         return;
       }
+
       const needle = query.toLowerCase();
+
       const filtered = [];
       for (const t of tabs) {
         const title = (t.title || "").toLowerCase();
@@ -251,6 +261,7 @@
           filtered.push(t);
         }
       }
+
       selectedIndex = 0;
       render(filtered);
     });
