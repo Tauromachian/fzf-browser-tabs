@@ -7,6 +7,9 @@
   const close = () => {
     if (!container) return;
 
+    const handler = container.__focusinHandler;
+    if (handler) document.removeEventListener("focusin", handler, true);
+    if (typeof container.close === "function") container.close();
     container.remove();
     container = null;
   };
@@ -241,6 +244,14 @@
 
     render(tabs);
     input.focus();
+
+    const onFocusIn = (e) => {
+      if (!container) return;
+      if (shadow.contains(e.target)) return;
+      input.focus();
+    };
+    document.addEventListener("focusin", onFocusIn, true);
+    host.__focusinHandler = onFocusIn;
 
     input.addEventListener("input", () => {
       const query = input.value.trim();
