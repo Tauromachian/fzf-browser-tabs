@@ -98,12 +98,6 @@
         flex-shrink: 0;
       }
       .title { overflow: hidden; text-overflow: ellipsis; }
-      .meta {
-        opacity: 0.55;
-        font-size: 13px;
-        margin-left: auto;
-        flex-shrink: 0;
-      }
       .empty {
         padding: 20px;
         text-align: center;
