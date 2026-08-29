@@ -7,13 +7,8 @@
   const close = () => {
     if (!container) return;
 
-    const { host, dialog, focusinHandler } = container;
-    if (focusinHandler) {
-      document.removeEventListener("focusin", focusinHandler, true);
-    }
+    const { dialog } = container;
     if (dialog && dialog.open) dialog.close();
-    host.remove();
-    container = null;
   };
 
   const show = async (incomingTabs) => {
@@ -240,6 +235,16 @@
 
     container = { host, dialog, shadow, input, focusinHandler: onFocusIn };
 
+    dialog.addEventListener("close", () => {
+      if (!container) return;
+      const { host: h, focusinHandler } = container;
+      if (focusinHandler) {
+        document.removeEventListener("focusin", focusinHandler, true);
+      }
+      h.remove();
+      container = null;
+    });
+
     input.addEventListener("input", () => {
       const query = input.value.trim();
 
@@ -301,12 +306,4 @@
 
     show(msg.tabs);
   });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && container) {
-      e.preventDefault();
-      e.stopPropagation();
-      close();
-    }
-  }, true);
 })();
