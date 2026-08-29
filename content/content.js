@@ -256,11 +256,7 @@
     });
 
     input.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        close();
-      } else if (e.key === "ArrowDown") {
+      if (e.key === "ArrowDown") {
         e.preventDefault();
         moveSelection(1);
       } else if (e.key === "ArrowUp") {
@@ -299,6 +295,8 @@
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && container) {
+      e.preventDefault();
+      e.stopPropagation();
       close();
     }
   }, true);
