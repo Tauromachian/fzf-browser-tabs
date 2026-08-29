@@ -271,17 +271,14 @@
       }
     });
 
+    // Event listener to go to selected tab
     results.addEventListener("mousedown", (e) => {
       const li = e.target.closest("li");
       if (!li) return;
+
       e.preventDefault();
-      const children = results.children;
-      for (let i = 0; i < children.length; i++) {
-        if (children[i] === li) {
-          select(i);
-          return;
-        }
-      }
+      const childIndex = results.children.indexOf(li);
+      select(childIndex);
     });
 
     overlay.addEventListener("click", () => close());
