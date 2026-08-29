@@ -288,7 +288,8 @@
   };
 
   browser.runtime.onMessage.addListener((msg) => {
-    if (!msg?.type === "show-switcher") return;
+    if (!msg) return;
+    if (msg.type !== "show-switcher") return;
 
     show(msg.tabs);
   });
