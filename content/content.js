@@ -7,20 +7,19 @@
   const close = () => {
     if (!container) return;
 
-    const handler = container.__focusinHandler;
-    if (handler) document.removeEventListener("focusin", handler, true);
-    if (typeof container.close === "function") container.close();
-    container.remove();
+    const { host, dialog, focusinHandler } = container;
+    if (focusinHandler) {
+      document.removeEventListener("focusin", focusinHandler, true);
+    }
+    if (dialog && dialog.open) dialog.close();
+    host.remove();
     container = null;
   };
 
   const show = async (incomingTabs) => {
     if (container) {
-      const existing = container.shadowRoot.querySelector("#search");
-      if (existing) {
-        existing.focus();
-        existing.select();
-      }
+      container.input.focus();
+      container.input.select();
       return;
     }
 
@@ -48,27 +47,19 @@
     style.textContent = `
       :host { all: initial; }
       * { box-sizing: border-box; }
-      .overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 2147483646;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      }
-      .panel {
-        width: min(640px, 90vw);
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        max-height: 70vh;
+      dialog {
+        border: 0;
+        padding: 10px;
+        border-radius: 10px;
         background: #1e1e1e;
         color: #eee;
-        border-radius: 10px;
         box-shadow: 0 24px 64px rgba(0,0,0,0.55);
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        z-index: 2147483647;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        width: min(640px, 90vw);
+        max-height: 70vh;
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.45);
       }
       #search {
         width: 100%;
@@ -127,10 +118,8 @@
     `;
     shadow.appendChild(style);
 
-    const overlay = document.createElement("div");
-    overlay.className = "overlay";
-    const panel = document.createElement("div");
-    panel.className = "panel";
+    const dialog = document.createElement("dialog");
+    shadow.appendChild(dialog);
 
     const input = document.createElement("input");
     input.id = "search";
@@ -138,17 +127,14 @@
     input.placeholder = "Search tabs...";
     input.spellcheck = false;
     input.autocomplete = "off";
-    panel.appendChild(input);
-
-    shadow.appendChild(overlay);
-    shadow.appendChild(panel);
+    dialog.appendChild(input);
 
     const results = document.createElement("ul");
     results.id = "results";
-    panel.appendChild(results);
+    dialog.appendChild(results);
 
     document.documentElement.appendChild(host);
-    container = host;
+    dialog.showModal();
 
     let selectedIndex = 0;
     let currentItems = tabs;
@@ -251,7 +237,8 @@
       input.focus();
     };
     document.addEventListener("focusin", onFocusIn, true);
-    host.__focusinHandler = onFocusIn;
+
+    container = { host, dialog, shadow, input, focusinHandler: onFocusIn };
 
     input.addEventListener("input", () => {
       const query = input.value.trim();
@@ -303,7 +290,9 @@
       select(childIndex);
     });
 
-    overlay.addEventListener("click", () => close());
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) close();
+    });
   };
 
   browser.runtime.onMessage.addListener((msg) => {
