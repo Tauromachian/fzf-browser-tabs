@@ -1,6 +1,9 @@
 browser.commands.onCommand.addListener(async (command) => {
   if (command !== "open-tab-switcher") return;
-  const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true });
+  const [activeTab] = await browser.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
   if (!activeTab || activeTab.id == null) {
     console.warn("fzf-browser-tabs: no active tab");
     return;
@@ -14,7 +17,11 @@ browser.commands.onCommand.addListener(async (command) => {
     return;
   }
 
-  const payload = { type: "show-switcher", tabs };
+  const payload = {
+    type: "show-switcher",
+    tabs,
+    currentTabID: activeTab.id,
+  };
 
   try {
     await browser.tabs.sendMessage(activeTab.id, payload);
