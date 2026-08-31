@@ -26,8 +26,8 @@ The extension stays loaded until Firefox restarts. For permanent install, the ex
 
 Trigger the tab switcher with the default shortcut:
 
-- Linux / Windows: `Ctrl+Alt+K`
-- macOS: `Command+Alt+K`
+- Linux / Windows: `Ctrl+Alt+S`
+- macOS: `Command+Alt+S`
 
 The shortcut can be remapped at `about:addons` → this extension → **Manage keyboard shortcuts**.
 
@@ -47,7 +47,7 @@ Once open:
 
 **Command flow:**
 
-1. The user presses `Ctrl+Alt+K`.
+1. The user presses `Ctrl+Alt+S`.
 2. `background/background.js` (`browser.commands.onCommand`) queries the active tab with `tabs.query({ active: true, currentWindow: true })`, then queries all tabs with `tabs.query({})`.
 3. The background sends `{ type: "show-switcher", tabs, currentTabId }` to the active tab's content script. (`currentTabId` is the id of the tab that triggered the command — used to filter the user's own tab out of the list.)
 4. If the content script isn't injected yet (e.g., the page loaded before the extension), the background falls back to `browser.scripting.executeScript` to inject `content/content.js`, then re-sends the message.
