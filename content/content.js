@@ -255,18 +255,23 @@
     });
 
     input.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        moveSelection(1);
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        moveSelection(-1);
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        select();
-      } else if (e.key === "Tab") {
-        e.preventDefault();
-        moveSelection(e.shiftKey ? -1 : 1);
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          moveSelection(1);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          moveSelection(-1);
+          break;
+        case "Enter":
+          e.preventDefault();
+          select();
+          break;
+        case "Tab":
+          e.preventDefault();
+          moveSelection(e.shiftKey ? -1 : 1);
+          break;
       }
     });
 
