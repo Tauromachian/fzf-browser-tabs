@@ -254,8 +254,22 @@
       render(filtered);
     });
 
-    // Specific workaround to input not seeing Escape keydown
-    input.addEventListener("blur", close);
+    // Workaround to input not seeing Escape keydown
+    let isClickOutside = true;
+    dialog.addEventListener("mousedown", (e) => {
+      const rect = dialog.getBoundingClientRect();
+
+      isClickOutside = false;
+      if (e.clientX < rect.left) isClickOutside = true;
+      if (e.clientY < rect.top) isClickOutside = true;
+      if (e.clientX > rect.left + rect.width) isClickOutside = true;
+      if (e.clientY > rect.top + rect.height) isClickOutside = true;
+    }, true);
+
+    // Workaround to input not seeing Escape keydown
+    input.addEventListener("blur", () => {
+      if (isClickOutside) close();
+    });
 
     input.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -289,7 +303,7 @@
     });
 
     dialog.addEventListener("click", (e) => {
-      if (e.target === dialog) close();
+      if (e.target === dialog && e.target.closest("li")) close();
     });
   };
 
