@@ -34,7 +34,7 @@
 
     const host = document.createElement("div");
     host.setAttribute("data-fzf-browser-tabs", "");
-    const shadow = host.attachShadow({ mode: "closed" });
+    const shadow = host.attachShadow({ mode: "open", delegatesFocus: true });
 
     const style = document.createElement("style");
     style.textContent = `
