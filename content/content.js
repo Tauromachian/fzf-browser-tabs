@@ -254,6 +254,9 @@
       render(filtered);
     });
 
+    // Specific workaround to input not seeing Escape keydown
+    input.addEventListener("blur", close);
+
     input.addEventListener("keydown", (e) => {
       switch (e.key) {
         case "ArrowDown":
