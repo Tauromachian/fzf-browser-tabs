@@ -284,7 +284,7 @@
       if (!li) return;
 
       e.preventDefault();
-      const childIndex = results.children.indexOf(li);
+      const childIndex = [...results.children].indexOf(li);
       select(childIndex);
     });
 
