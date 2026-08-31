@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "fzf-browser-tabs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fuzzy-find browser tabs",
 
   "browser_specific_settings": {
