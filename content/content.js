@@ -18,8 +18,6 @@
       return;
     }
 
-    console.log("currentTabID", currentTabID);
-
     const tabs = [];
 
     if (!Array.isArray(incomingTabs)) {
@@ -29,7 +27,6 @@
 
     for (const t of incomingTabs) {
       if (!t || t.id === null) continue;
-      console.log(t);
       if (t.id === currentTabID) continue;
 
       tabs.push(t);
