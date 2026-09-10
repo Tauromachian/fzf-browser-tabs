@@ -1,0 +1,24 @@
+{
+  "name": "fzf-browser-tabs",
+  "scripts": {
+    "build:firefox": "npx web-ext build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "Fuzzy finder for browser tabs",
+  "keywords": [
+    "plugin",
+    "browser",
+    "firefox",
+    "tabs"
+  ],
+  "homepage": "https://github.com/Tauromachian/fzf-browser-tabs#readme",
+  "bugs": {
+    "url": "https://github.com/Tauromachian/fzf-browser-tabs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tauromachian/fzf-browser-tabs.git"
+  },
+  "license": "ISC",
+  "author": "Jose Garcia"
+}
