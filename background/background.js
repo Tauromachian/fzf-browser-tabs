@@ -135,29 +135,12 @@ function orderTabsByRecency(tabs) {
   return ordered;
 }
 
-async function broadcastCachedTabs() {
-  if (switcherTabs.size === 0) return;
-
-  const message = {
-    type: "tabs-changed",
-    tabs: orderTabsByRecency(cachedTabs),
-  };
-  for (const tabId of [...switcherTabs]) {
-    try {
-      await browser.tabs.sendMessage(tabId, message);
-    } catch {
-      // Switcher closed or tab gone — stop tracking it.
-      switcherTabs.delete(tabId);
-    }
-  }
-}
-
 function scheduleCacheRefresh() {
   if (pendingRefresh !== null) return;
 
   pendingRefresh = setTimeout(() => {
     pendingRefresh = null;
-    void refreshTabsCache().then(() => broadcastCachedTabs());
+    void refreshTabsCache();
   }, CACHE_DEBOUNCE_MS);
 }
 
@@ -166,10 +149,12 @@ void refreshTabsCache();
 
 browser.commands.onCommand.addListener(async (command) => {
   if (command !== "open-tab-switcher") return;
+
   const [activeTab] = await browser.tabs.query({
     active: true,
     currentWindow: true,
   });
+
   if (!activeTab || activeTab.id == null) {
     console.warn("fzf-browser-tabs: no active tab");
     return;
@@ -210,6 +195,7 @@ browser.runtime.onMessage.addListener((msg) => {
     return (async () => {
       try {
         if (msg.tabId != null) recentTabs.touch(msg.tabId);
+
         await browser.tabs.update(msg.tabId, { active: true });
         if (msg.windowId != null) {
           await browser.windows.update(msg.windowId, { focused: true });
@@ -221,10 +207,12 @@ browser.runtime.onMessage.addListener((msg) => {
       }
     })();
   }
+
   if (msg && msg.type === "switcher-closed" && msg.tabId != null) {
     switcherTabs.delete(msg.tabId);
     return false;
   }
+
   return false;
 });
 
