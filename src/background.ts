@@ -188,7 +188,7 @@ browser.commands.onCommand.addListener(async (command: string) => {
   try {
     await browser.scripting.executeScript({
       target: { tabId: activeTab.id },
-      files: ["content/content.js"],
+      files: ["dist/content.js"],
     });
     await browser.tabs.sendMessage(activeTab.id, payload);
     switcherTabs.add(activeTab.id);

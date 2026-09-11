@@ -50,10 +50,10 @@ Once open:
 1. The user presses `Ctrl+Alt+S`.
 2. `src/background.ts` (bundled to `dist/background.js`) (`browser.commands.onCommand`) queries the active tab with `tabs.query({ active: true, currentWindow: true })`, then queries all tabs with `tabs.query({})`.
 3. The background sends `{ type: "show-switcher", tabs, currentTabId }` to the active tab's content script. (`currentTabId` is the id of the tab that triggered the command — used to filter the user's own tab out of the list.)
-4. If the content script isn't injected yet (e.g., the page loaded before the extension), the background falls back to `browser.scripting.executeScript` to inject `content/content.js`, then re-sends the message.
+4. If the content script isn't injected yet (e.g., the page loaded before the extension), the background falls back to `browser.scripting.executeScript` to inject `dist/content.js` (bundled from `src/content.ts`), then re-sends the message.
 5. The content script renders the modal overlay. Selecting a result sends `{ type: "switch-tab", tabId, windowId }` back; the background calls `tabs.update` and `windows.update`.
 
-**Modal overlay (`content/content.js`):**
+**Modal overlay (`src/content.ts` → `dist/content.js`):**
 
 - A `<div>` host element is appended to `document.documentElement` and given a closed shadow root.
 - Inside the shadow root, a `<dialog>` is created with input + results. Calling `dialog.showModal()` places it in the [top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer) — above every page stacking context, no z-index tricks needed.
