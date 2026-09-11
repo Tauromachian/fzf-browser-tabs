@@ -44,16 +44,6 @@ class MruList {
     return true;
   }
 
-  toArray() {
-    const out = [];
-    let node = this.head;
-    while (node) {
-      out.push(node.id);
-      node = node.next;
-    }
-    return out;
-  }
-
   detach(node) {
     this.lookup.delete(node.id);
     this.length--;
@@ -89,6 +79,20 @@ class MruList {
 
     this.head = node;
   }
+
+  [Symbol.iterator]() {
+    let current = this.head;
+
+    return {
+      next() {
+        if (!current) return { value: undefined, done: true };
+
+        const tmp = current;
+        current = current?.next;
+        return { value: tmp.id, done: false };
+      },
+    };
+  }
 }
 
 const recentTabs = new MruList();
@@ -107,9 +111,11 @@ async function refreshTabsCache() {
   for (const tab of cachedTabs) {
     if (tab && tab.id != null) known.add(tab.id);
   }
-  for (const id of recentTabs.toArray()) {
+
+  for (const id of recentTabs) {
     if (!known.has(id)) recentTabs.delete(id);
   }
+
   return cachedTabs;
 }
 
@@ -118,20 +124,25 @@ async function refreshTabsCache() {
 // the ordering comes from the MRU list.
 function orderTabsByRecency(tabs) {
   const byId = new Map();
+
   for (const tab of tabs) {
     if (tab && tab.id != null) byId.set(tab.id, tab);
   }
+
   const ordered = [];
-  for (const id of recentTabs.toArray()) {
+
+  for (const id of recentTabs) {
     const tab = byId.get(id);
     if (tab) {
       ordered.push(tab);
       byId.delete(id);
     }
   }
+
   for (const tab of tabs) {
     if (tab && tab.id != null && byId.has(tab.id)) ordered.push(tab);
   }
+
   return ordered;
 }
 
