@@ -133,10 +133,10 @@ function orderTabsByRecency(tabs) {
 
   for (const id of recentTabs) {
     const tab = byId.get(id);
-    if (tab) {
-      ordered.push(tab);
-      byId.delete(id);
-    }
+    if (!tab) continue;
+
+    ordered.push(tab);
+    byId.delete(id);
   }
 
   for (const tab of byId.values()) {
