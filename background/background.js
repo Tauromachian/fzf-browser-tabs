@@ -139,8 +139,8 @@ function orderTabsByRecency(tabs) {
     }
   }
 
-  for (const tab of tabs) {
-    if (tab && tab.id != null && byId.has(tab.id)) ordered.push(tab);
+  for (const tab of byId.values()) {
+    ordered.push(tab);
   }
 
   return ordered;
