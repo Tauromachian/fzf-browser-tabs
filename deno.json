@@ -1,10 +1,11 @@
 {
   "tasks": {
+    "build:firefox": "deno task bundle:background && deno task bundle:content && dx web-ext build --overwrite-dest",
     "bundle:background": "deno bundle -o dist/background.js src/background.ts",
     "bundle:content": "deno bundle -o dist/content.js src/content.ts",
-    "build": "deno task bundle:background && deno task bundle:content",
-    "build:firefox": "deno task build && dx web-ext build",
-    "dev": "deno bundle --watch -o dist/content.js src/content.ts",
+    "dev:background": "deno bundle --watch -o dist/background.js src/background.ts",
+    "dev:content": "deno bundle --watch -o dist/content.js src/content.ts",
+    "dev": "bash -c 'deno task dev:background & deno task dev:content & wait'",
     "start:firefox": "dx web-ext run"
   },
   "imports": {
