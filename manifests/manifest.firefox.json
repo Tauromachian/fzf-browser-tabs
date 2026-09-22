@@ -17,7 +17,7 @@
   "commands": {
     "open-tab-switcher": {
       "suggested_key": {
-        "default": "Alt+Shift+S"
+        "default": "Ctrl+Space"
       },
       "description": "Open the fzf tab switcher"
     }
