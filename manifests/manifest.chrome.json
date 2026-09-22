@@ -12,8 +12,7 @@
   "commands": {
     "open-tab-switcher": {
       "suggested_key": {
-        "default": "Ctrl+Shift+S",
-        "mac": "Command+Shift+S"
+        "default": "Alt+Shift+S"
       },
       "description": "Open the fzf tab switcher"
     }

@@ -31,6 +31,11 @@ eq(
   firefox.commands?.["open-tab-switcher"]?.description,
   chrome.commands?.["open-tab-switcher"]?.description,
 );
+eq(
+  "commands.open-tab-switcher.suggested_key.default",
+  firefox.commands?.["open-tab-switcher"]?.suggested_key?.default,
+  chrome.commands?.["open-tab-switcher"]?.suggested_key?.default,
+);
 
 // Firefox-only keys.
 for (const path of ["browser_specific_settings", "background.scripts"]) {

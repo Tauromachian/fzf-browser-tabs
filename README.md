@@ -35,11 +35,14 @@ The extension stays loaded until Firefox restarts. For permanent install, the ex
 
 ## Usage
 
-Trigger the tab switcher with the default shortcut:
+Trigger the tab switcher with the default shortcut: `Alt+Shift+S` on all
+platforms and both browsers (macOS: `Option+Shift+S` — `Alt` is not
+auto-converted like `Ctrl` is, so there is no Spotlight conflict).
 
-- Firefox — Linux / Windows: `Ctrl+Alt+S`, macOS: `Command+Alt+S`
-- Chrome — Linux / Windows: `Ctrl+Shift+S`, macOS: `Command+Shift+S`
-  (`Ctrl+Alt` combos are banned on Chrome because of AltGr conflicts.)
+(`Ctrl+Alt` combos are banned on Chrome because of AltGr conflicts, which is
+why the default avoids them. On some Linux/Windows setups bare `Alt+Shift`
+switches keyboard layouts and the OS may swallow the combo — remap below if
+it doesn't fire.)
 
 The shortcut can be remapped at `about:addons` → this extension → **Manage keyboard shortcuts**
 (Firefox) or `chrome://extensions/shortcuts` (Chrome).
