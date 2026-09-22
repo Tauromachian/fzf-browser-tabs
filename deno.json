@@ -8,14 +8,15 @@
     "manifest:chrome": "cp manifests/manifest.chrome.json dist/chrome/manifest.json",
     "check": "deno check src/browsers/firefox/background.ts src/browsers/chrome/background.ts src/content/content.ts && deno task check:manifests",
     "check:manifests": "deno run --allow-read scripts/check-manifests.ts",
-    "build:firefox": "deno task bundle:background:firefox && deno task bundle:content:firefox && deno task manifest:firefox && dx web-ext build --source-dir dist/firefox --artifacts-dir web-ext-artifacts --overwrite-dest",
+    "lint:firefox": "npx -y web-ext@10 lint --source-dir dist/firefox",
+    "build:firefox": "deno task bundle:background:firefox && deno task bundle:content:firefox && deno task manifest:firefox && npx -y web-ext@10 build --source-dir dist/firefox --artifacts-dir web-ext-artifacts --overwrite-dest",
     "build:chrome": "deno task bundle:background:chrome && deno task bundle:content:chrome && deno task manifest:chrome && bash scripts/package-chrome.sh",
     "build:all": "deno task build:firefox && deno task build:chrome",
     "dev:background:firefox": "deno bundle --watch -o dist/firefox/background.js src/browsers/firefox/background.ts",
     "dev:background:chrome": "deno bundle --watch -o dist/chrome/background.js src/browsers/chrome/background.ts",
     "dev:content:firefox": "deno bundle --watch -o dist/firefox/content.js src/content/content.ts",
     "dev:content:chrome": "deno bundle --watch -o dist/chrome/content.js src/content/content.ts",
-    "start:firefox": "dx web-ext run --source-dir dist/firefox"
+    "start:firefox": "npx -y web-ext@10 run --source-dir dist/firefox"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"
