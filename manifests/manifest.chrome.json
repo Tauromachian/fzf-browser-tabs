@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "fzf-browser-tabs",
+  "version": "0.1.3",
+  "description": "Fuzzy-find browser tabs",
+
+  "minimum_chrome_version": "148",
+
+  "permissions": ["tabs", "scripting"],
+  "host_permissions": ["<all_urls>"],
+
+  "commands": {
+    "open-tab-switcher": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Open the fzf tab switcher"
+    }
+  },
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

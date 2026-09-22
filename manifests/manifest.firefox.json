@@ -25,13 +25,13 @@
   },
 
   "background": {
-    "scripts": ["dist/background.js"]
+    "scripts": ["background.js"]
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["dist/content.js"],
+      "js": ["content.js"],
       "run_at": "document_idle",
       "all_frames": false
     }

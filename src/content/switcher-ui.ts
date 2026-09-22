@@ -1,4 +1,4 @@
-import type { FzfTab } from "./content.ts";
+import type { FzfTab } from "../shared/types.ts";
 
 export type SwitcherElements = {
   host: HTMLDivElement;

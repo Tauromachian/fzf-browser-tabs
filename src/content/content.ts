@@ -1,24 +1,11 @@
+import "../shared/browser.ts";
 import { createSwitcherUI, renderResults } from "./switcher-ui.ts";
-
-export type FzfTab = {
-  id?: number;
-  windowId?: number;
-  title?: string;
-  url?: string;
-  favIconUrl?: string;
-};
-
-type ShowSwitcherMessage = {
-  type?: unknown;
-  tabs?: unknown;
-  currentTabID?: unknown;
-};
-
-type SwitchTabPayload = {
-  type: "switch-tab";
-  tabId: number;
-  windowId?: number;
-};
+import { excludeCurrentTab, filterTabs } from "../shared/tab-filter.ts";
+import { isShowSwitcherMessage } from "../shared/messages.ts";
+import type {
+  FzfTab,
+  ShowSwitcherMessage,
+} from "../shared/types.ts";
 
 type SwitcherContainer = {
   host: HTMLDivElement;
@@ -28,20 +15,11 @@ type SwitcherContainer = {
   focusinHandler: (e: FocusEvent) => void;
 };
 
-type BrowserRuntime = {
-  sendMessage(message: SwitchTabPayload): Promise<unknown>;
-  onMessage: {
-    addListener(callback: (msg: ShowSwitcherMessage) => void): void;
-  };
-};
-
 declare global {
   // Must stay an interface: type aliases cannot augment the global Window.
   interface Window {
     __fzfBrowserTabsInjected?: boolean;
   }
-
-  const browser: { runtime: BrowserRuntime };
 }
 
 (() => {
@@ -70,21 +48,7 @@ declare global {
       return;
     }
 
-    const tabs: FzfTab[] = [];
-
-    if (!Array.isArray(incomingTabs)) {
-      console.warn("fzf-browser-tabs: something went wrong with tabs");
-      return;
-    }
-
-    for (const entry of incomingTabs) {
-      if (entry === null || typeof entry !== "object") continue;
-      const t = entry as FzfTab;
-      if (t.id == null) continue;
-      if (t.id === currentTabID) continue;
-
-      tabs.push(t);
-    }
+    const tabs: FzfTab[] = excludeCurrentTab(incomingTabs, currentTabID);
 
     const { host, shadow, dialog, input, results } = createSwitcherUI();
 
@@ -166,27 +130,8 @@ declare global {
     });
 
     input.addEventListener("input", (): void => {
-      const query: string = input.value.trim();
-
-      if (!query) {
-        selectedIndex = 0;
-        render(tabs);
-        return;
-      }
-
-      const needle: string = query.toLowerCase();
-
-      const filtered: FzfTab[] = [];
-      for (const t of tabs) {
-        const title: string = (t.title ?? "").toLowerCase();
-        const url: string = (t.url ?? "").toLowerCase();
-        if (title.indexOf(needle) !== -1 || url.indexOf(needle) !== -1) {
-          filtered.push(t);
-        }
-      }
-
       selectedIndex = 0;
-      render(filtered);
+      render(filterTabs(tabs, input.value));
     });
 
     // Workaround to input not seeing Escape keydown
@@ -247,8 +192,7 @@ declare global {
   };
 
   browser.runtime.onMessage.addListener((msg: ShowSwitcherMessage): void => {
-    if (!msg) return;
-    if (msg.type !== "show-switcher") return;
+    if (!isShowSwitcherMessage(msg)) return;
 
     show(msg.tabs, msg.currentTabID);
   });
