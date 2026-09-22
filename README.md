@@ -1,6 +1,6 @@
 # fzf-browser-tabs
 
-A Firefox WebExtension that lets you fuzzy-find and switch between browser tabs, `fzf`-style.
+A Firefox + Chrome WebExtension (Manifest V3) that lets you fuzzy-find and switch between browser tabs, `fzf`-style.
 
 Press the shortcut, type to filter, hit enter to jump to the matching tab.
 
@@ -10,26 +10,39 @@ Press the shortcut, type to filter, hit enter to jump to the matching tab.
 - Keyboard-driven: navigate with `Up`/`Down`/`Tab`, select with `Enter`, dismiss with `Esc`
 - Hides the currently active tab from the list (so you can't no-op switch to yourself)
 - Opens even when only one tab exists (single-tab fallback)
-- Self-contained modal overlay rendered with the native `<dialog>` element in a closed Shadow DOM — no page CSS leakage and no z-index wars with page popups
+- Self-contained modal overlay rendered with the native `<dialog>` element in an open Shadow DOM — no page CSS leakage and no z-index wars with page popups
 - Content script injects on demand into pages that didn't load it at startup
 - Captures `Esc` natively via the dialog's close watcher
 
-## Install (temporary, in Firefox)
+## Install (temporary)
+
+Build first: `deno task build:firefox` and/or `deno task build:chrome`.
+This assembles self-contained roots under `dist/firefox/` and `dist/chrome/`
+(each holds its own `manifest.json` + `background.js` + `content.js`).
+
+**Firefox:**
 
 1. Open `about:debugging#/runtime/this-firefox`.
 2. Click **Load Temporary Add-on...**.
-3. Select the `manifest.json` in this repository.
+3. Select `dist/firefox/manifest.json`.
 
 The extension stays loaded until Firefox restarts. For permanent install, the extension would need to be signed by Mozilla and the id re-keyed (`fzf-browser-tabs@example.com`).
+
+**Chrome:**
+
+1. Open `chrome://extensions`, enable **Developer mode**.
+2. Click **Load unpacked** and select `dist/chrome/`.
 
 ## Usage
 
 Trigger the tab switcher with the default shortcut:
 
-- Linux / Windows: `Ctrl+Alt+S`
-- macOS: `Command+Alt+S`
+- Firefox — Linux / Windows: `Ctrl+Alt+S`, macOS: `Command+Alt+S`
+- Chrome — Linux / Windows: `Ctrl+Shift+S`, macOS: `Command+Shift+S`
+  (`Ctrl+Alt` combos are banned on Chrome because of AltGr conflicts.)
 
-The shortcut can be remapped at `about:addons` → this extension → **Manage keyboard shortcuts**.
+The shortcut can be remapped at `about:addons` → this extension → **Manage keyboard shortcuts**
+(Firefox) or `chrome://extensions/shortcuts` (Chrome).
 
 Once open:
 
@@ -47,15 +60,15 @@ Once open:
 
 **Command flow:**
 
-1. The user presses `Ctrl+Alt+S`.
-2. `src/background.ts` (bundled to `dist/background.js`) (`browser.commands.onCommand`) queries the active tab with `tabs.query({ active: true, currentWindow: true })`, then queries all tabs with `tabs.query({})`.
-3. The background sends `{ type: "show-switcher", tabs, currentTabId }` to the active tab's content script. (`currentTabId` is the id of the tab that triggered the command — used to filter the user's own tab out of the list.)
-4. If the content script isn't injected yet (e.g., the page loaded before the extension), the background falls back to `browser.scripting.executeScript` to inject `dist/content.js` (bundled from `src/content.ts`), then re-sends the message.
+1. The user presses the shortcut.
+2. The background entry (`src/browsers/firefox/background.ts` or `src/browsers/chrome/background.ts`, bundled to `dist/<browser>/background.js`) (`browser.commands.onCommand`) queries the active tab with `tabs.query({ active: true, currentWindow: true })`, then queries all tabs with `tabs.query({})`.
+3. The background sends `{ type: "show-switcher", tabs, currentTabID }` to the active tab's content script. (`currentTabID` is the id of the tab that triggered the command — used to filter the user's own tab out of the list.)
+4. If the content script isn't injected yet (e.g., the page loaded before the extension), the background falls back to `browser.scripting.executeScript` to inject `content.js` (bundled from `src/content/content.ts`), then re-sends the message.
 5. The content script renders the modal overlay. Selecting a result sends `{ type: "switch-tab", tabId, windowId }` back; the background calls `tabs.update` and `windows.update`.
 
-**Modal overlay (`src/content.ts` → `dist/content.js`):**
+**Modal overlay (`src/content/content.ts` → `content.js`):**
 
-- A `<div>` host element is appended to `document.documentElement` and given a closed shadow root.
+- A `<div>` host element is appended to `document.documentElement` and given an open shadow root.
 - Inside the shadow root, a `<dialog>` is created with input + results. Calling `dialog.showModal()` places it in the [top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer) — above every page stacking context, no z-index tricks needed.
 - When the dialog is in the modal state, the rest of the document is [inert](https://html.spec.whatwg.org/multipage/interaction.html#inert) — `element.focus()` calls from page popups (cookie consent banners, etc.) become no-ops, which solves focus theft without any per-frame bookkeeping.
 - `Esc` is handled by the dialog's built-in close watcher; a single `close` event listener tears down the host and removes the focusin guard.
@@ -69,12 +82,28 @@ Once open:
 ## Project layout
 
 ```
-manifest.json              # WebExtension manifest (Manifest V3, gecko)
-background/
-  background.js            # Command listener, tab query, tab switching
-content/
-  content.js               # Overlay UI, fuzzy filter, keyboard handling
+manifests/
+  manifest.firefox.json   # Firefox MV3 manifest (background.scripts, gecko id, Ctrl+Alt+S)
+  manifest.chrome.json    # Chrome MV3 manifest (background.service_worker, min Chrome 148, Ctrl+Shift+S)
+src/
+  shared/                 # Browser-agnostic logic: types, LRU, tab cache/ordering/filter, message shapes
+  browsers/
+    firefox/background.ts # Firefox background entry (event page, debounced cache refresh)
+    chrome/background.ts  # Chrome background entry (service worker, no timers/startup pre-warm)
+  content/
+    content.ts            # Overlay lifecycle, keyboard/mouse handling (shared by both browsers)
+    switcher-ui.ts        # Shadow-DOM modal factory + result rendering
+scripts/
+  check-manifests.ts      # `deno task check:manifests` — fails on name/version/permissions drift
+  package-chrome.sh       # Zips dist/chrome/ for the Chrome Web Store
+dist/
+  firefox/                # Built Firefox root: manifest.json + background.js + content.js
+  chrome/                 # Built Chrome root: manifest.json + background.js + content.js
 ```
+
+One manifest per browser, one shared codebase: `browsers/*` and `content/*`
+may import from `shared/*`; `shared/*` never imports browser-specific code;
+the two browser domains never import each other.
 
 ## Permissions
 
@@ -86,6 +115,8 @@ No `windows` permission — the active tab id comes from the command listener's 
 
 ## Notes
 
-- Targets Firefox 109+ (`strict_min_version` in `manifest.json`).
+- Targets Firefox 109+ (`strict_min_version` in `manifests/manifest.firefox.json`)
+  and Chrome 148+ (`minimum_chrome_version` in `manifests/manifest.chrome.json`,
+  the first version with native `browser.*` promise-namespace support).
 - Single source of truth for cleanup: the `close` event listener on the dialog. `close()` only invokes `dialog.close()`; everything else (host removal, focusin listener removal, container reset) runs from that listener.
 - The current tab is hidden from the list by id match against `currentTabId`. With only one tab, the filter would empty the list — so the content script falls back to showing all tabs to keep the switcher responsive.
