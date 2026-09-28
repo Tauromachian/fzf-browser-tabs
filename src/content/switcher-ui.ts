@@ -9,34 +9,45 @@ export type SwitcherElements = {
 };
 
 const SWITCHER_STYLES = `
-      :host { all: initial; }
+      :host {
+        all: initial;
+        --fzf-dialog-bg: #1e1e1e;
+        --fzf-dialog-fg: #eee;
+        --fzf-dialog-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+        --fzf-backdrop-bg: rgba(0, 0, 0, 0.45);
+        --fzf-input-bg: #2a2a2a;
+        --fzf-input-fg: #eee;
+        --fzf-input-border: #3a3a3a;
+        --fzf-accent: #4a90e2;
+        --fzf-accent-fg: #fff;
+      }
       * { box-sizing: border-box; }
       dialog {
         border: 0;
         padding: 14px;
         border-radius: 12px;
-        background: #1e1e1e;
-        color: #eee;
-        box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+        background: var(--fzf-dialog-bg);
+        color: var(--fzf-dialog-fg);
+        box-shadow: var(--fzf-dialog-shadow);
         font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
         width: min(720px, 92vw);
         max-height: 75vh;
       }
       dialog::backdrop {
-        background: rgba(0, 0, 0, 0.45);
+        background: var(--fzf-backdrop-bg);
       }
       #search {
         width: 100%;
         padding: 14px 16px;
         font-size: 20px;
-        background: #2a2a2a;
-        color: #eee;
-        border: 1px solid #3a3a3a;
+        background: var(--fzf-input-bg);
+        color: var(--fzf-input-fg);
+        border: 1px solid var(--fzf-input-border);
         border-radius: 8px;
         outline: none;
         font-family: inherit;
       }
-      #search:focus { border-color: #4a90e2; }
+      #search:focus { border-color: var(--fzf-accent); }
       #results {
         list-style: none;
         padding: 0;
@@ -58,8 +69,8 @@ const SWITCHER_STYLES = `
         line-height: 1.4;
       }
       #results li.selected {
-        background: #4a90e2;
-        color: #fff;
+        background: var(--fzf-accent);
+        color: var(--fzf-accent-fg);
       }
       .favicon {
         width: 22px;
