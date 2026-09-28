@@ -95,8 +95,10 @@ declare global {
 
     const moveSelection = (delta: number): void => {
       if (currentItems.length === 0) return;
+
       const len: number = currentItems.length;
       selectedIndex = (selectedIndex + delta + len) % len;
+
       for (let i = 0; i < results.children.length; i++) {
         results.children[i].classList.toggle("selected", i === selectedIndex);
       }
@@ -174,6 +176,7 @@ declare global {
       const li: HTMLLIElement | null = target?.closest("li") as
         | HTMLLIElement
         | null;
+
       if (!li) return;
 
       e.preventDefault();
