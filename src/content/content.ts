@@ -2,10 +2,7 @@ import "../shared/browser.ts";
 import { createSwitcherUI, renderResults } from "./switcher-ui.ts";
 import { excludeCurrentTab, filterTabs } from "../shared/tab-filter.ts";
 import { isShowSwitcherMessage } from "../shared/messages.ts";
-import type {
-  FzfTab,
-  ShowSwitcherMessage,
-} from "../shared/types.ts";
+import type { FzfTab, ShowSwitcherMessage } from "../shared/types.ts";
 
 type SwitcherContainer = {
   host: HTMLDivElement;
@@ -163,7 +160,7 @@ declare global {
           break;
         case "Enter":
           e.preventDefault();
-          void select();
+          select();
           break;
         case "Tab":
           e.preventDefault();
@@ -182,7 +179,7 @@ declare global {
 
       e.preventDefault();
       const childIndex: number = [...results.children].indexOf(li);
-      void select(childIndex);
+      select(childIndex);
     });
 
     dialog.addEventListener("click", (e: MouseEvent): void => {
