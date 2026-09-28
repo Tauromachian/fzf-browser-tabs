@@ -34,11 +34,10 @@ declare global {
     if (dialog && dialog.open) dialog.close();
   };
 
-  // deno-lint-ignore require-await -- kept async to preserve the Promise<void> signature
-  const show = async (
+  const show = (
     incomingTabs: unknown,
     currentTabID: unknown,
-  ): Promise<void> => {
+  ): void => {
     if (container) {
       container.input.focus();
       container.input.select();
