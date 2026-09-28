@@ -73,12 +73,12 @@ declare global {
 
     const select = async (idx?: number): Promise<void> => {
       const target: number = idx ?? selectedIndex;
-      const tab: FzfTab | undefined = currentItems[target];
 
+      const tab: FzfTab | undefined = currentItems[target];
       if (!tab) return;
 
       const tabId: number | undefined = tab.id;
-      if (tabId == null) return;
+      if (!tabId) return;
 
       const windowId: number | undefined = tab.windowId ?? undefined;
       close();
