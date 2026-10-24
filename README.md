@@ -6,7 +6,7 @@ Press the shortcut, type to filter, hit enter to jump to the matching tab.
 
 ## Features
 
-- Fuzzy search across tab titles and URLs (case-insensitive substring match)
+- Fuzzy search across tab titles and URLs (fzf-style subsequence match, case-insensitive, best match first)
 - Keyboard-driven: navigate with `Up`/`Down`/`Tab`, select with `Enter`, dismiss with `Esc`
 - Hides the currently active tab from the list (so you can't no-op switch to yourself)
 - Opens even when only one tab exists (single-tab fallback)
@@ -80,7 +80,7 @@ Once open:
 
 **Filter:**
 
-- Substring match (case-insensitive) against `tab.title` and `tab.url`. Not a real fzf fuzzy match.
+- Fzf-style fuzzy match (case-insensitive subsequence against `tab.title` and `tab.url`, best match first). Consecutive runs, word boundaries and early positions score higher; title hits outrank equal URL-only hits. Multi-word queries split on whitespace (every token must match).
 - Empty query shows all tabs (minus the current one).
 
 ## Project layout
