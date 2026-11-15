@@ -13,6 +13,7 @@ const SWITCHER_STYLES = `
         all: initial;
         --fzf-dialog-bg: #1e1e1e;
         --fzf-dialog-fg: #eee;
+        --fzf-dialog-border: transparent;
         --fzf-dialog-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
         --fzf-backdrop-bg: rgba(0, 0, 0, 0.45);
         --fzf-input-bg: #2a2a2a;
@@ -20,10 +21,26 @@ const SWITCHER_STYLES = `
         --fzf-input-border: #3a3a3a;
         --fzf-accent: #4a90e2;
         --fzf-accent-fg: #fff;
+        color-scheme: dark;
+      }
+      @media (prefers-color-scheme: light) {
+        :host {
+          --fzf-dialog-bg: #ffffff;
+          --fzf-dialog-fg: #1c1c1e;
+          --fzf-dialog-border: #e2e2e6;
+          --fzf-dialog-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+          --fzf-backdrop-bg: rgba(15, 23, 42, 0.35);
+          --fzf-input-bg: #f2f2f4;
+          --fzf-input-fg: #1c1c1e;
+          --fzf-input-border: #d9d9de;
+          --fzf-accent: #2b7cd3;
+          --fzf-accent-fg: #fff;
+          color-scheme: light;
+        }
       }
       * { box-sizing: border-box; }
       dialog {
-        border: 0;
+        border: 1px solid var(--fzf-dialog-border);
         padding: 14px;
         border-radius: 12px;
         background: var(--fzf-dialog-bg);
