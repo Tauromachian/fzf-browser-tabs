@@ -14,9 +14,16 @@ Press the shortcut, type to filter, hit enter to jump to the matching tab.
 - Content script injects on demand into pages that didn't load it at startup
 - Captures `Esc` natively via the dialog's close watcher
 
+## Prerequisites
+
+- Node.js 22+ with `corepack` enabled: `corepack enable`
+- `pnpm` v12 (pinned via `packageManager` in `package.json` — `corepack` picks it up automatically): `corepack prepare --activate`
+
+Install dependencies: `pnpm install`
+
 ## Install (temporary)
 
-Build first: `deno task build:firefox` and/or `deno task build:chrome`.
+Build first: `pnpm run build:firefox` and/or `pnpm run build:chrome`.
 This assembles self-contained roots under `dist/firefox/` and `dist/chrome/`
 (each holds its own `manifest.json` + `background.js` + `content.js`).
 
@@ -52,7 +59,7 @@ Once open:
 
 | Key | Action |
 |---|---|
-| Type | Filter by title / URL (substring, case-insensitive) |
+| Type | Filter by title / URL (fuzzy, best match first) |
 | `↑` / `↓` | Move selection |
 | `Tab` / `Shift+Tab` | Move selection |
 | `Enter` | Switch to selected tab |
@@ -98,8 +105,9 @@ src/
     content.ts            # Overlay lifecycle, keyboard/mouse handling (shared by both browsers)
     switcher-ui.ts        # Shadow-DOM modal factory + result rendering
 scripts/
-  check-manifests.ts      # `deno task check:manifests` — fails on name/version/permissions drift
-  package-chrome.sh       # Zips dist/chrome/ for the Chrome Web Store
+  check-manifests.mjs   # `pnpm run check:manifests` — fails on name/version/permissions drift
+  copy-manifest.mjs     # copies the per-browser manifest into dist/
+  package-chrome.sh     # Zips dist/chrome/ for the Chrome Web Store
 dist/
   firefox/                # Built Firefox root: manifest.json + background.js + content.js
   chrome/                 # Built Chrome root: manifest.json + background.js + content.js
@@ -116,6 +124,14 @@ the two browser domains never import each other.
 - `<all_urls>` — required to inject on every page
 
 No `windows` permission — the active tab id comes from the command listener's `tabs.query` result, not from `browser.windows.getCurrent`.
+
+## Development
+
+- Typecheck + manifest check: `pnpm run check` (`tsc --noEmit` + `check:manifests`)
+- Lint: `pnpm run lint` — Biome (formatter + linter + import sorting)
+- Format: `pnpm run format` (`biome check --write .`)
+- Watch mode: `pnpm run dev:background:firefox`, `pnpm run dev:content:firefox`, … (esbuild `--watch`)
+- Run in Firefox: `pnpm run start:firefox`
 
 ## Notes
 

@@ -1,7 +1,7 @@
 import "../../shared/browser.ts";
+import { buildShowSwitcherPayload } from "../../shared/messages.ts";
 import { createTabStore } from "../../shared/tab-cache.ts";
 import { orderTabsByRecency } from "../../shared/tab-ordering.ts";
-import { buildShowSwitcherPayload } from "../../shared/messages.ts";
 
 // Chrome background entry (service worker). Service workers can be killed at
 // any time, so this entry must not rely on module-level timers or startup

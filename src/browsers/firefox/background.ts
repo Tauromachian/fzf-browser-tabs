@@ -1,7 +1,7 @@
 import "../../shared/browser.ts";
+import { buildShowSwitcherPayload } from "../../shared/messages.ts";
 import { createTabStore } from "../../shared/tab-cache.ts";
 import { orderTabsByRecency } from "../../shared/tab-ordering.ts";
-import { buildShowSwitcherPayload } from "../../shared/messages.ts";
 
 // Firefox background entry (event page). Keeps the debounced cache refresh:
 // setTimeout survives on Firefox's persistent/event page, unlike on Chrome's

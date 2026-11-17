@@ -12,7 +12,6 @@ class Node<V extends { id: LruId }> {
 
 export class LRU<V extends { id: LruId }> {
   private head?: Node<V>;
-  private tail?: Node<V>;
   private lookup = new Map<LruId, Node<V>>();
   private length = 0;
 
@@ -47,8 +46,6 @@ export class LRU<V extends { id: LruId }> {
 
     if (node.next) {
       node.next.prev = node.prev;
-    } else {
-      this.tail = node.prev;
     }
 
     node.prev = undefined;
@@ -64,8 +61,6 @@ export class LRU<V extends { id: LruId }> {
 
     if (this.head) {
       this.head.prev = node;
-    } else {
-      this.tail = node;
     }
 
     this.head = node;

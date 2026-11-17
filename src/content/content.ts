@@ -1,8 +1,8 @@
 import "../shared/browser.ts";
-import { createSwitcherUI, renderResults } from "./switcher-ui.ts";
-import { excludeCurrentTab, filterTabs } from "../shared/tab-filter.ts";
 import { isShowSwitcherMessage } from "../shared/messages.ts";
+import { excludeCurrentTab, filterTabs } from "../shared/tab-filter.ts";
 import type { FzfTab, ShowSwitcherMessage } from "../shared/types.ts";
+import { createSwitcherUI, renderResults } from "./switcher-ui.ts";
 
 type SwitcherContainer = {
   host: HTMLDivElement;
@@ -20,9 +20,8 @@ declare global {
 }
 
 (() => {
-  // deno-lint-ignore no-window -- content script intentionally uses the page window as re-injection guard
+  // Content script intentionally uses the page window as re-injection guard.
   if (window.__fzfBrowserTabsInjected) return;
-  // deno-lint-ignore no-window -- content script intentionally uses the page window as re-injection guard
   window.__fzfBrowserTabsInjected = true;
 
   let container: SwitcherContainer | null = null;
@@ -31,13 +30,10 @@ declare global {
     if (!container) return;
 
     const { dialog } = container;
-    if (dialog && dialog.open) dialog.close();
+    if (dialog.open) dialog.close();
   };
 
-  const show = (
-    incomingTabs: unknown,
-    currentTabID: unknown,
-  ): void => {
+  const show = (incomingTabs: unknown, currentTabID: unknown): void => {
     if (container) {
       container.input.focus();
       container.input.select();
@@ -134,15 +130,19 @@ declare global {
 
     // Workaround to input not seeing Escape keydown
     let isClickOutside = true;
-    dialog.addEventListener("mousedown", (e: MouseEvent): void => {
-      const rect: DOMRect = dialog.getBoundingClientRect();
+    dialog.addEventListener(
+      "mousedown",
+      (e: MouseEvent): void => {
+        const rect: DOMRect = dialog.getBoundingClientRect();
 
-      isClickOutside = false;
-      if (e.clientX < rect.left) isClickOutside = true;
-      if (e.clientY < rect.top) isClickOutside = true;
-      if (e.clientX > rect.left + rect.width) isClickOutside = true;
-      if (e.clientY > rect.top + rect.height) isClickOutside = true;
-    }, true);
+        isClickOutside = false;
+        if (e.clientX < rect.left) isClickOutside = true;
+        if (e.clientY < rect.top) isClickOutside = true;
+        if (e.clientX > rect.left + rect.width) isClickOutside = true;
+        if (e.clientY > rect.top + rect.height) isClickOutside = true;
+      },
+      true,
+    );
 
     // Workaround to input not seeing Escape keydown
     input.addEventListener("blur", (): void => {
@@ -173,9 +173,7 @@ declare global {
     // Event listener to go to selected tab
     results.addEventListener("mousedown", (e: MouseEvent): void => {
       const target = e.target as Element | null;
-      const li: HTMLLIElement | null = target?.closest("li") as
-        | HTMLLIElement
-        | null;
+      const li: HTMLLIElement | null = target?.closest("li") as HTMLLIElement | null;
 
       if (!li) return;
 

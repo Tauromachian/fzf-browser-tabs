@@ -2,10 +2,7 @@ import type { FzfTab } from "./types.ts";
 
 // Validate the incoming tab list and drop the tab that opened the switcher
 // (switching to yourself would be a no-op).
-export function excludeCurrentTab(
-  incomingTabs: unknown,
-  currentTabID: unknown,
-): FzfTab[] {
+export function excludeCurrentTab(incomingTabs: unknown, currentTabID: unknown): FzfTab[] {
   const tabs: FzfTab[] = [];
 
   if (!Array.isArray(incomingTabs)) {
@@ -31,7 +28,10 @@ export function excludeCurrentTab(
 // in order) against the title or URL. Matches are ranked best-first; ties
 // keep the incoming (MRU) order.
 export function filterTabs(tabs: FzfTab[], query: string): FzfTab[] {
-  const tokens = query.toLowerCase().split(/\s+/).filter((t) => t.length > 0);
+  const tokens = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((t) => t.length > 0);
 
   if (tokens.length === 0) return tabs;
 
@@ -67,14 +67,8 @@ export function filterTabs(tabs: FzfTab[], query: string): FzfTab[] {
 // Best fuzzy score for one lowercase token against title/URL (either field
 // may match). Title matches get a small boost so e.g. a title hit outranks
 // an equally good URL-only hit.
-function scoreTabToken(
-  tokenLower: string,
-  title: string,
-  url: string,
-): number | null {
-  const titleScore = title
-    ? fuzzyScore(tokenLower, title, title.toLowerCase())
-    : null;
+function scoreTabToken(tokenLower: string, title: string, url: string): number | null {
+  const titleScore = title ? fuzzyScore(tokenLower, title, title.toLowerCase()) : null;
   const urlScore = url ? fuzzyScore(tokenLower, url, url.toLowerCase()) : null;
 
   let best: number | null = null;
@@ -105,9 +99,7 @@ function fieldBonus(text: string): number[] {
     const curr = text[j];
     if (SEPARATORS.has(prev)) {
       out[j] = SCORE_SEPARATOR;
-    } else if (
-      prev >= "a" && prev <= "z" && curr >= "A" && curr <= "Z"
-    ) {
+    } else if (prev >= "a" && prev <= "z" && curr >= "A" && curr <= "Z") {
       out[j] = SCORE_CAMEL;
     } else {
       out[j] = 0;
@@ -121,11 +113,7 @@ function fieldBonus(text: string): number[] {
 // boundaries and early positions score more; skipped chars between matches
 // are penalized. `text` is the original-cased field (for camel-boundary
 // detection); `textLower` is its lowercase form for comparison.
-export function fuzzyScore(
-  patternLower: string,
-  text: string,
-  textLower: string,
-): number | null {
+export function fuzzyScore(patternLower: string, text: string, textLower: string): number | null {
   const m = patternLower.length;
   const n = text.length;
   if (m === 0) return 0;
@@ -159,12 +147,8 @@ export function fuzzyScore(
       if (textLower[j] === pc) {
         const prevBest = j > 0 ? mPrev[j - 1] : NEG;
         const prevConsec = j > 0 ? dPrev[j - 1] : NEG;
-        const scoreSplit = prevBest === NEG
-          ? NEG
-          : prevBest + SCORE_BASE + bonus[j];
-        const scoreConsec = prevConsec === NEG
-          ? NEG
-          : prevConsec + SCORE_BASE + SCORE_CONSECUTIVE;
+        const scoreSplit = prevBest === NEG ? NEG : prevBest + SCORE_BASE + bonus[j];
+        const scoreConsec = prevConsec === NEG ? NEG : prevConsec + SCORE_BASE + SCORE_CONSECUTIVE;
         dCur[j] = Math.max(scoreSplit, scoreConsec);
       }
       const carry = j > 0 ? mCur[j - 1] + GAP_INNER : NEG;

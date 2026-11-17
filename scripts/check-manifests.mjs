@@ -1,17 +1,15 @@
-//Fails `deno task check:manifests` when the per-browser manifests drift on
+// Fails `pnpm run check:manifests` when the per-browser manifests drift on
 // fields that must stay identical. Browser-specific keys (background,
 // commands.suggested_key, browser_specific_settings, minimum_chrome_version)
 // are asserted separately below.
-const firefox = JSON.parse(
-  await Deno.readTextFile("manifests/manifest.firefox.json"),
-);
-const chrome = JSON.parse(
-  await Deno.readTextFile("manifests/manifest.chrome.json"),
-);
+import { readFile } from "node:fs/promises";
+
+const firefox = JSON.parse(await readFile("manifests/manifest.firefox.json", "utf8"));
+const chrome = JSON.parse(await readFile("manifests/manifest.chrome.json", "utf8"));
 
 let failed = false;
 
-function eq(path: string, a: unknown, b: unknown): void {
+function eq(path, a, b) {
   if (JSON.stringify(a) !== JSON.stringify(b)) {
     console.error(`manifest drift at ${path}:
   firefox: ${JSON.stringify(a)}
@@ -40,9 +38,9 @@ eq(
 // Firefox-only keys.
 for (const path of ["browser_specific_settings", "background.scripts"]) {
   const parts = path.split(".");
-  let node: unknown = firefox;
+  let node = firefox;
   for (const part of parts) {
-    node = (node as Record<string, unknown>)?.[part];
+    node = node?.[part];
   }
   if (node === undefined) {
     console.error(`firefox manifest missing ${path}`);
@@ -64,5 +62,5 @@ if (typeof chrome.minimum_chrome_version !== "string") {
   failed = true;
 }
 
-if (failed) Deno.exit(1);
+if (failed) process.exit(1);
 console.log("manifests OK");

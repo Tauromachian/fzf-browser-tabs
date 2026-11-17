@@ -23,9 +23,7 @@ export function createTabStore() {
     recentTabs.add({ id });
   }
 
-  async function refresh(
-    queryAll: () => Promise<FzfTab[]>,
-  ): Promise<FzfTab[]> {
+  async function refresh(queryAll: () => Promise<FzfTab[]>): Promise<FzfTab[]> {
     try {
       cachedTabs = await queryAll();
     } catch (e) {

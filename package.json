@@ -1,0 +1,40 @@
+{
+  "name": "fzf-browser-tabs",
+  "version": "0.1.3",
+  "description": "Fuzzy-find browser tabs",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "bundle:background:firefox": "esbuild src/browsers/firefox/background.ts --bundle --format=iife --target=es2022 --outfile=dist/firefox/background.js --log-level=warning",
+    "bundle:background:chrome": "esbuild src/browsers/chrome/background.ts --bundle --format=iife --target=es2022 --outfile=dist/chrome/background.js --log-level=warning",
+    "bundle:content:firefox": "esbuild src/content/content.ts --bundle --format=iife --target=es2022 --outfile=dist/firefox/content.js --log-level=warning",
+    "bundle:content:chrome": "esbuild src/content/content.ts --bundle --format=iife --target=es2022 --outfile=dist/chrome/content.js --log-level=warning",
+    "bundle": "pnpm run bundle:background:firefox && pnpm run bundle:background:chrome && pnpm run bundle:content:firefox && pnpm run bundle:content:chrome",
+    "manifest:firefox": "node scripts/copy-manifest.mjs firefox",
+    "manifest:chrome": "node scripts/copy-manifest.mjs chrome",
+    "check": "tsc --noEmit && pnpm run check:manifests",
+    "check:manifests": "node scripts/check-manifests.mjs",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "lint:firefox": "web-ext lint --source-dir dist/firefox",
+    "build:firefox": "pnpm run bundle:background:firefox && pnpm run bundle:content:firefox && pnpm run manifest:firefox && web-ext build --source-dir dist/firefox --artifacts-dir web-ext-artifacts --overwrite-dest",
+    "build:chrome": "pnpm run bundle:background:chrome && pnpm run bundle:content:chrome && pnpm run manifest:chrome && bash scripts/package-chrome.sh",
+    "build:all": "pnpm run build:firefox && pnpm run build:chrome",
+    "dev:background:firefox": "esbuild src/browsers/firefox/background.ts --bundle --format=iife --target=es2022 --outfile=dist/firefox/background.js --watch",
+    "dev:background:chrome": "esbuild src/browsers/chrome/background.ts --bundle --format=iife --target=es2022 --outfile=dist/chrome/background.js --watch",
+    "dev:content:firefox": "esbuild src/content/content.ts --bundle --format=iife --target=es2022 --outfile=dist/firefox/content.js --watch",
+    "dev:content:chrome": "esbuild src/content/content.ts --bundle --format=iife --target=es2022 --outfile=dist/chrome/content.js --watch",
+    "start:firefox": "web-ext run --source-dir dist/firefox"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2",
+    "web-ext": "10.8.0"
+  }
+}

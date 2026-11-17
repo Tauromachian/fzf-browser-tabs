@@ -45,11 +45,7 @@ export type BrowserCommands = {
 
 export type BackgroundRuntime = {
   onMessage: {
-    addListener(
-      cb: (
-        msg: { type?: unknown; tabId?: number; windowId?: number },
-      ) => unknown,
-    ): void;
+    addListener(cb: (msg: { type?: unknown; tabId?: number; windowId?: number }) => unknown): void;
   };
 };
 
@@ -67,10 +63,7 @@ export type ContentRuntime = {
 };
 
 export type BrowserScripting = {
-  executeScript(opts: {
-    target: { tabId: number };
-    files: string[];
-  }): Promise<unknown>;
+  executeScript(opts: { target: { tabId: number }; files: string[] }): Promise<unknown>;
 };
 
 export type BrowserWindows = {
